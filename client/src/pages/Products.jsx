@@ -11,7 +11,7 @@ export default function Products() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const load = async () => {
+  const fetchProducts = async () => {
     setLoading(true)
     try {
       const data = await api('/products', { token })
@@ -23,31 +23,39 @@ export default function Products() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { fetchProducts() }, [])
 
-  const add = async (e) => {
+  const handleAddProduct = async (e) => {
     e.preventDefault()
     setError('')
     try {
       await api('/products', { method: 'POST', token, body: { name, price: Number(price), description } })
-      setName(''); setPrice(''); setDescription('')
-      await load()
+      setName('')
+      setPrice('')
+      setDescription('')
+      await fetchProducts()
     } catch (e) { setError(e.message) }
   }
 
-  const del = async (id) => {
+  const handleDeleteProduct = async (id) => {
     if (!confirm('Delete product?')) return
-    try { await api(`/products/${id}`, { method: 'DELETE', token }); await load() } catch (e) { setError(e.message) }
+    try {
+      await api(`/products/${id}`, { method: 'DELETE', token })
+      await fetchProducts()
+    } catch (e) { setError(e.message) }
   }
 
-  const update = async (id, payload) => {
-    try { await api(`/products/${id}`, { method: 'PUT', token, body: payload }); await load() } catch (e) { setError(e.message) }
+  const handleUpdateProduct = async (id, payload) => {
+    try {
+      await api(`/products/${id}`, { method: 'PUT', token, body: payload })
+      await fetchProducts()
+    } catch (e) { setError(e.message) }
   }
 
   return (
     <div>
       <h2>Products</h2>
-      <form onSubmit={add}>
+      <form onSubmit={handleAddProduct}>
         <div>
           <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
@@ -77,18 +85,18 @@ export default function Products() {
             {items.map(p => (
               <tr key={p._id}>
                 <td>
-                  <InlineEdit value={p.name} onSave={(v) => update(p._id, { name: v })} allowed />
+                  <InlineEdit value={p.name} onSave={(v) => handleUpdateProduct(p._id, { name: v })} allowed />
                 </td>
                 <td>
-                  <InlineEdit value={String(p.price)} onSave={(v) => update(p._id, { price: Number(v) })} allowed />
+                  <InlineEdit value={String(p.price)} onSave={(v) => handleUpdateProduct(p._id, { price: Number(v) })} allowed />
                 </td>
                 <td>
-                  <InlineEdit value={p.description || ''} onSave={(v) => update(p._id, { description: v })} allowed />
+                  <InlineEdit value={p.description || ''} onSave={(v) => handleUpdateProduct(p._id, { description: v })} allowed />
                 </td>
                 <td>{p.createdBy?.email || '—'}</td>
                 <td>
                   {(user.role === 'admin' || p.createdBy?._id === user.id) && (
-                    <button onClick={() => del(p._id)}>Delete</button>
+                    <button onClick={() => handleDeleteProduct(p._id)}>Delete</button>
                   )}
                 </td>
               </tr>

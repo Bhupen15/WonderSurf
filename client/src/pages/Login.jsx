@@ -11,7 +11,7 @@ export default function Login() {
   const location = useLocation()
   const { login } = useAuth()
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     try {
@@ -27,7 +27,7 @@ export default function Login() {
   return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div>
           <label>Email</label>
           <input value={email} onChange={(e) => setEmail(e.target.value)} required />

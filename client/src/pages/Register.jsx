@@ -12,7 +12,7 @@ export default function Register() {
   const navigate = useNavigate()
   const { login } = useAuth()
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     try {
@@ -27,7 +27,7 @@ export default function Register() {
   return (
     <div>
       <h2>Register</h2>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div>
           <label>Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)} required />

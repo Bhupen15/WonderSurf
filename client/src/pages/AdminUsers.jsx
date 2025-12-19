@@ -8,7 +8,7 @@ export default function AdminUsers() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
-  const load = async () => {
+  const fetchUsers = async () => {
     setLoading(true)
     try {
       const data = await api('/users', { token })
@@ -17,7 +17,7 @@ export default function AdminUsers() {
     finally { setLoading(false) }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { fetchUsers() }, [])
 
   return (
     <div>
